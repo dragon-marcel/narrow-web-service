@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -27,10 +29,11 @@ public class Provider implements Serializable{
     private Long id;
     private String name;
     private String email;
+    private String nip;
     @Column(name = "NR_TEL")
     private String nrTel;
-    private String town;
-    private String country;
+    @OneToOne
+	private AdditionalDataAddress additionalDataAddress;
     
 
 }

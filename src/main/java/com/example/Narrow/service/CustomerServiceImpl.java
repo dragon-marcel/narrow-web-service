@@ -8,7 +8,9 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.Narrow.model.AdditionalDataAddress;
 import com.example.Narrow.model.Customer;
+import com.example.Narrow.model.Geolocation;
 import com.example.Narrow.repository.CustomerRepository;
 
 @Service
@@ -16,7 +18,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	private CustomerRepository customerRepository;
-
+	@Autowired
+	private GeolocationService geolocationService;
 	@PersistenceContext
 	private EntityManager em;
 
@@ -27,12 +30,24 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public void save(Customer customer) {
+		AdditionalDataAddress addAdrress = customer.getAdditionalDataAddress();
+		AdditionalDataAddress latLng = getGeo(customer, addAdrress);
+
+		if (latLng != null) {
+			customer.setAdditionalDataAddress(addAdrress);
+		}
 		customerRepository.save(customer);
 
 	}
 
 	@Override
 	public void editCustomer(Customer customer) {
+		AdditionalDataAddress addAdrress = customer.getAdditionalDataAddress();
+		AdditionalDataAddress latLng = getGeo(customer, addAdrress);
+
+		if (latLng != null) {
+			customer.setAdditionalDataAddress(addAdrress);
+		}
 		customerRepository.save(customer);
 
 	}
@@ -61,6 +76,15 @@ public class CustomerServiceImpl implements CustomerService {
 			return null;
 		}
 
+	}
+
+	private AdditionalDataAddress getGeo(Customer provider, AdditionalDataAddress addAdrress) {
+		Geolocation latLng = geolocationService.getGeoLocation(addAdrress.getCity(), addAdrress.getCountry());
+		if (latLng != null) {
+			addAdrress.setLat(latLng.getLat());
+			addAdrress.setLng(latLng.getLng());
+		}
+		return addAdrress;
 	}
 
 }
