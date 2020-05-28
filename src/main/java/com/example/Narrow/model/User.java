@@ -91,4 +91,16 @@ public class User implements UserDetails,Serializable{
 	// TODO Auto-generated method stub
 	return false;
     }
+
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return password;
+	}
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return username;
+	}
 }
