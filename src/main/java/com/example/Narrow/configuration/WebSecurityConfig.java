@@ -26,7 +26,7 @@ import com.example.Narrow.service.JWTService;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, proxyTargetClass = true)
+@EnableGlobalMethodSecurity(jsr250Enabled = true, prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
@@ -49,13 +49,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	          .frameOptions().sameOrigin()
 	          .and()
 	            .authorizeRequests()
-	             .antMatchers("/avatar/**","/h2-console/**").permitAll()
+	             .antMatchers("/avatar/**","/h2-console/**","/v2/api-docs",
+                         "/configuration/ui",
+                         "/swagger-resources/**",
+                         "/configuration/security",
+                         "/swagger-ui.html",
+                         "/webjars/**").permitAll()
 //	                .antMatchers("/users/**").hasAnyAuthority("ADMIN")
 //	                .antMatchers("/useraa/**").hasAnyAuthority("USER")
 	                .anyRequest().authenticated().and().
 	                addFilter(new JWTAuthenticationFilter(authenticationManager(),jWTService))   
-	                .addFilter(new JWTAuthorizationToken(authenticationManager(),jWTService)).
-	                cors().and().csrf().disable().
+	                .addFilter(new JWTAuthorizationToken(authenticationManager(),jWTService,customUserDetailsService))
+	                .cors().and().csrf().disable().
 		            sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //	            .formLogin()
 //	                .loginPage("/login")
